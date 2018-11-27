@@ -4,28 +4,28 @@ import javafx.stage.Stage;
 
 public class ViewFacade {
 	
-	private Stage primaryStage;
+	private FxManager fxmanager;
 	
 	public ViewFacade(Stage primaryStage)
 	{
-		this.setPrimaryStage(primaryStage);	
+		System.out.println("Launching view");
+		this.setFxmanager(new FxManager(this, primaryStage));
 	}
 
 	
-	//Getters and setters//
+	//Getters and setters//	
 	/**
-	 * @return the primaryStage
+	 * @return the fxmanager
 	 */
-	public Stage getPrimaryStage() {
-		return primaryStage;
+	public FxManager getFxmanager() {
+		return fxmanager;
 	}
 
 	/**
-	 * @param primaryStage the primaryStage to set
+	 * @param fxmanager the fxmanager to set
 	 */
-	public void setPrimaryStage(Stage primaryStage) {
-		this.primaryStage = primaryStage;
+	public void setFxmanager(FxManager fxmanager) {
+		this.fxmanager = fxmanager;
 	}
-	
 
 }

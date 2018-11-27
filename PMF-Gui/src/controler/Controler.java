@@ -12,6 +12,7 @@ public class Controler {
 	{
 		this.setModel(model);
 		this.setView(view);
+		System.out.println("Launching contoler");
 	}
 
 	

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.MainMenuControler">
+   <children>
+      <ImageView fitHeight="512.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/background.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="close" fitHeight="26.0" fitWidth="26.0" layoutX="109.0" layoutY="23.0" onMouseClicked="#exit" onMouseEntered="#onButtonFocused" onMouseExited="#onButtonNotFocused" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/close.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="minimize" fitHeight="24.0" fitWidth="24.0" layoutX="143.0" layoutY="24.0" onMouseClicked="#minimize" onMouseEntered="#onButtonFocused" onMouseExited="#onButtonNotFocused" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/minimize.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>
