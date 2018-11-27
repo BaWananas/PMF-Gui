@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.MainMenuControler">
    <children>
@@ -11,15 +15,49 @@
             <Image url="@../images/background.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="close" fitHeight="26.0" fitWidth="26.0" layoutX="109.0" layoutY="23.0" onMouseClicked="#exit" onMouseEntered="#onButtonFocused" onMouseExited="#onButtonNotFocused" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="close" fitHeight="32.0" fitWidth="32.0" layoutX="113.0" layoutY="27.0" onMouseClicked="#exit" onMouseEntered="#onButtonFocused" onMouseExited="#onButtonNotFocused" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/close.png" />
          </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </ImageView>
-      <ImageView fx:id="minimize" fitHeight="24.0" fitWidth="24.0" layoutX="143.0" layoutY="24.0" onMouseClicked="#minimize" onMouseEntered="#onButtonFocused" onMouseExited="#onButtonNotFocused" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="minimize" fitHeight="32.0" fitWidth="32.0" layoutX="155.0" layoutY="27.0" onMouseClicked="#minimize" onMouseEntered="#onButtonFocused" onMouseExited="#onButtonNotFocused" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/minimize.png" />
          </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </ImageView>
+      <ImageView fx:id="temp_image" fitHeight="150.0" fitWidth="200.0" layoutX="268.0" layoutY="62.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/temp.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
+      </ImageView>
+      <Pane fx:id="temp_type" layoutX="291.0" layoutY="139.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="24.0" prefWidth="32.0">
+         <children>
+            <ImageView fx:id="temp_type_image" fitHeight="32.0" fitWidth="32.0" layoutX="-1.0" layoutY="-5.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/celsius.png" />
+               </image>
+            </ImageView>
+         </children>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Pane>
+      <Text fx:id="temp_value" layoutX="323.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="41.34375">
+         <font>
+            <Font size="16.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="TEXT" />
+         </cursor>
+      </Text>
    </children>
 </AnchorPane>
