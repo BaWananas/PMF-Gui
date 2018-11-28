@@ -46,7 +46,6 @@ public class FxManager {
 		this.primaryStage.initStyle(StageStyle.TRANSPARENT);
 		this.primaryStage.setAlwaysOnTop(true);
 		this.primaryStage.setOpacity(1);
-		Stage stage = this.primaryStage;
 		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("images/background.png")));
 		
 		//Init the container
@@ -87,10 +86,10 @@ public class FxManager {
 		});
 	}
 	
-	private synchronized void incrementOpacity(double opacity)
-	{
-		this.primaryStage.setOpacity(this.primaryStage.getOpacity()+opacity);
-	}
+//	private synchronized void incrementOpacity(double opacity)
+//	{
+//		this.primaryStage.setOpacity(this.primaryStage.getOpacity()+opacity);
+//	}
 
 	
 	//Getters and setters//	

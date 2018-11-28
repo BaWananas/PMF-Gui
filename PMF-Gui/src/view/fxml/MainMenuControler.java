@@ -61,7 +61,7 @@ public class MainMenuControler {
 	
 	public void exit()
 	{
-		this.manager.getPrimaryStage().close();
+		this.getManager().getView().getControler().stop();
 	}
 	
 	public void minimize()

@@ -1,5 +1,7 @@
 package view;
 
+import java.awt.AWTException;
+
 import controler.Controler;
 import javafx.stage.Stage;
 
@@ -7,11 +9,17 @@ public class ViewFacade {
 	
 	private Controler controler;
 	private FxManager fxmanager;
+	private NotificationManager notifManager;
 	
 	public ViewFacade(Stage primaryStage)
 	{
 		System.out.println("Launching view");
 		this.setFxmanager(new FxManager(this, primaryStage));
+		try {
+			this.notifManager = new NotificationManager("images/temp_hight.png");
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void updateConsigne(Double consigne)
@@ -67,6 +75,20 @@ public class ViewFacade {
 	 */
 	public void setControler(Controler controler) {
 		this.controler = controler;
+	}
+
+	/**
+	 * @return the notifManager
+	 */
+	public NotificationManager getNotifManager() {
+		return notifManager;
+	}
+
+	/**
+	 * @param notifManager the notifManager to set
+	 */
+	public void setNotifManager(NotificationManager notifManager) {
+		this.notifManager = notifManager;
 	}
 
 }

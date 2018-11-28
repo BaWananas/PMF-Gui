@@ -14,7 +14,21 @@ public class Launcher extends Application{
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		this.controler = new Controler(new ModelFacade(), new ViewFacade(primaryStage));
+		this.setControler(new Controler(new ModelFacade(), new ViewFacade(primaryStage)));	
+	}
+
+	/**
+	 * @return the controler
+	 */
+	public Controler getControler() {
+		return controler;
+	}
+
+	/**
+	 * @param controler the controler to set
+	 */
+	public void setControler(Controler controler) {
+		this.controler = controler;
 	}
 
 	
