@@ -38,6 +38,9 @@ public class FxManager {
 		}
 	}
 	
+	/*
+	 * Init the primary stage, in other words the main window
+	 */
 	private void initDefaultStage() throws IOException
 	{
 		//Init the stage
@@ -68,6 +71,9 @@ public class FxManager {
 		this.primaryStage.show();
 	}
 	
+	/*
+	 * Set a stage movable
+	 */
 	private void setMovableFrame(Stage stage)
 	{
 		stage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {

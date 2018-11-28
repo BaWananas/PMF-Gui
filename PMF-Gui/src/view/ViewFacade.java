@@ -22,26 +22,41 @@ public class ViewFacade {
 		}
 	}
 	
+	/*
+	 * Update the consigne value
+	 */
 	public void updateConsigne(Double consigne)
 	{
 		this.controler.updateConsigne(consigne);
 	}
 	
+	/*
+	 * Set the actual temperature
+	 */
 	public void setTemp(Double temp)
 	{
 		this.getFxmanager().getPrimaryStageControler().getTemp_value().setText("" + temp);
 	}
 	
+	/*
+	 * Set the actual humidity level
+	 */
 	public void setHumidity(int percent)
 	{
 		this.fxmanager.getPrimaryStageControler().getInfo_humidity().setText("" + percent + "%");
 	}
 	
+	/*
+	 * Set the status of the door
+	 */
 	public void isDoorOpen(boolean bool)
 	{
 		this.fxmanager.getPrimaryStageControler().getInfo_door_status().setText("" + bool);
 	}
 	
+	/*
+	 * Set the temperature precision
+	 */
 	public void setPrecision(int precision)
 	{
 		this.fxmanager.getPrimaryStageControler().getInfo_precision().setText("" + precision + "%");
