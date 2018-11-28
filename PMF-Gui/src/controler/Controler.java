@@ -11,10 +11,40 @@ public class Controler {
 	public Controler(ModelFacade model, ViewFacade view)
 	{
 		this.setModel(model);
+//		this.model.setControler(this);
 		this.setView(view);
+		this.view.setControler(this);
 		System.out.println("Launching contoler");
 	}
 
+	
+	//Public methods//
+	public void updateConsigne(Double consigne)
+	{
+		//TODO
+		System.out.println("Updating consigne");
+	}
+	
+	public void setTemp(Double temp)
+	{
+		this.view.setTemp(temp);
+	}
+	
+	public void setHumidity(int percent)
+	{
+		this.view.setHumidity(percent);
+	}
+	
+	public void setPrecision(int precision)
+	{
+		this.getView().setPrecision(precision);
+	}
+	
+	public void setDoorStatus(boolean isOpen)
+	{
+		this.getView().isDoorOpen(isOpen);
+	}
+	
 	
 	//Getters and setters//
 	/**

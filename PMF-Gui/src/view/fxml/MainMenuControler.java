@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import view.FxManager;
 
@@ -39,6 +40,19 @@ public class MainMenuControler {
 	private ImageView consigne_add;
 	@FXML
 	private ImageView consigne_remove;
+	
+	/*
+	 * Info pane
+	 */
+	@FXML
+	private Pane info;
+	@FXML
+	private Text info_humidity;
+	@FXML
+	private Text info_precision;
+	@FXML
+	private Text info_door_status;
+	
 	
 	public void setMainApp(FxManager manager)
 	{
@@ -164,9 +178,31 @@ public class MainMenuControler {
 	 */
 	public void updateConsigne()
 	{
-		//TODO
+		try {
+			this.manager.getView().updateConsigne(Double.parseDouble(this.consigne.getText()));
+			System.out.println("Setting consigne");
+		} catch (Exception e) {
+			System.out.println("Consigne isn't set");
+		}
 	}
 	
+	/*
+	 * Show infos
+	 */
+	public void showInfos()
+	{
+		this.info.setDisable(false);
+		this.info.setOpacity(1);
+	}
+	
+	/*
+	 * Hide infos
+	 */
+	public void hideInfos()
+	{
+		this.info.setDisable(true);
+		this.info.setOpacity(0);
+	}
 	
 	//Private methods//
 	private Double cToF(Double celsius)
@@ -220,6 +256,62 @@ public class MainMenuControler {
 	 */
 	public ImageView getTemp_type_image() {
 		return temp_type_image;
+	}
+
+	/**
+	 * @return the info
+	 */
+	public Pane getInfo() {
+		return info;
+	}
+
+	/**
+	 * @param info the info to set
+	 */
+	public void setInfo(Pane info) {
+		this.info = info;
+	}
+
+	/**
+	 * @return the info_humidity
+	 */
+	public Text getInfo_humidity() {
+		return info_humidity;
+	}
+
+	/**
+	 * @param info_humidity the info_humidity to set
+	 */
+	public void setInfo_humidity(Text info_humidity) {
+		this.info_humidity = info_humidity;
+	}
+
+	/**
+	 * @return the info_precision
+	 */
+	public Text getInfo_precision() {
+		return info_precision;
+	}
+
+	/**
+	 * @param info_precision the info_precision to set
+	 */
+	public void setInfo_precision(Text info_precision) {
+		this.info_precision = info_precision;
+	}
+
+	/**
+	 * @return the info_door_status
+	 */
+	public Text getInfo_door_status() {
+		return info_door_status;
+	}
+
+	/**
+	 * @param info_door_status the info_door_status to set
+	 */
+	public void setInfo_door_status(Text info_door_status) {
+		this.info_door_status = info_door_status;
 	}
 
 	/**
