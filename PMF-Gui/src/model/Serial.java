@@ -11,7 +11,10 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
 
-
+/*
+ * Classe qui initialise la conenxion en trouvant le bon port usb sur lequel est connecté la carte Arduino
+ * Puis récupère les informations envoyées par l'Arduino
+ */
 public class Serial implements SerialPortEventListener {
 	
 	
@@ -31,6 +34,9 @@ public class Serial implements SerialPortEventListener {
 	public String Temperature_mesuree;
 	public String Temperature_rosee;
 	
+	/*
+	 * Variables nécéssaires à la reception/emission de données
+	 */
 	private BufferedReader input;
 	@SuppressWarnings("unused")
 	private OutputStream output;
@@ -39,12 +45,20 @@ public class Serial implements SerialPortEventListener {
 	private String position = "20";
 	private boolean finish = false;
 	SerialPort serialPort;
-	    /** The port we're normally going to use. */
+	
+	/*
+	 * Liste des ports possibles
+	 * La troisième case du tableau est vide, elle sera complétée par la méthode definePort()
+	 */
 	private static String PORT_NAMES[] = {"/dev/tty.usbserial-A9007UX1", // Mac OS X
 	        									"/dev/ttyUSB0", // Linux
 	        									"", // Windows
 	        									};
 	
+	
+	/*
+	 * Trouve le port sur lequel est branché l'Arduino
+	 */
 	public void definePort() {
 		
 		CommPortIdentifier serialPortId = null;
@@ -69,17 +83,12 @@ public class Serial implements SerialPortEventListener {
 		}
 	}
 
-	
-	public String getPosition() {
-		return this.position;
-	}
-	
-	public boolean getFinish() {
-		return this.finish;
-	}
-	
 
 	
+
+	/*
+	 * Initialise la connexion par port série
+	 */
 	public void initialize() {
 	    CommPortIdentifier portId = null;
 	    @SuppressWarnings("rawtypes")
@@ -131,6 +140,13 @@ public class Serial implements SerialPortEventListener {
 	    }
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see gnu.io.SerialPortEventListener#serialEvent(gnu.io.SerialPortEvent)
+	 * Ecoute les données envoyées par l'Arduino
+	 * Stocke dans la variable "chunks"
+	 * Récupère les 3 données séparées par ";"
+	 */
 	public synchronized void serialEvent(SerialPortEvent oEvent) {
 	    if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 	        try {
@@ -138,12 +154,17 @@ public class Serial implements SerialPortEventListener {
 	            if (input.ready()) {
 	                inputLine = input.readLine();
 	                String [] chunks = inputLine.split(";");
+	                //Affichage dans la console des données récéptionnées
 	                System.out.println("Humiditée : " + chunks[0] + "% | Température : " + chunks[1] + " | Point de rosée : " + chunks[2]);
+	                //Assignement des nouvelles valeurs aux données
 	                this.humidite = chunks[0];
 	                this.Temperature_mesuree = chunks[1];
 	                this.Temperature_rosee = chunks[2];
+	                //Conversion des données en double
 	                split_data.determiner_valeur_double();
+	                //Calcule les variables d'environnements à partir des données reçues par l'Arduino
 	                modelfacade.determiner_valeur_environnement();
+	                //Prend la décision pour l'Arduino et lui envoi grace à la méthode "writeData" de la classe "Serial"
 	                decision_fonctionnement.action_temperature();
 	            }
 	
@@ -155,13 +176,27 @@ public class Serial implements SerialPortEventListener {
 
 	}
 	
+	
+	
 	/*
 	 * Methode pour envoyer des donnees a l'Arduino
+	 * On utilise write() qui prend en paramètre des bits
 	 */
     public void writeData(int a) {
     	
     }
+    
 	
+	/*
+	 * Accesseurs
+	 */
+	public String getPosition() {
+		return this.position;
+	}
+	
+	public boolean getFinish() {
+		return this.finish;
+	}
 
 	public String getHumidite() {
 		return humidite;

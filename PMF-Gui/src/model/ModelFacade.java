@@ -1,14 +1,19 @@
 package model;
+/*
+ * Classe principale du modèle
+ * Contient les variables principales et les calculs annexes à la température
+ */
 
 public class ModelFacade {
 	
+
 	/*
-	 * Classe principale du modèle
+	 * Compositions
 	 */
-	
 	Serial serial = new Serial();
 	Split_Data split_data = new Split_Data();
 	
+	//Type de système, donnée affichée graphiquement
 	public String type_systeme = "Fermé";
 
 	
@@ -19,17 +24,19 @@ public class ModelFacade {
 	public double precision = 1; //Valeur en %
 	public double Fahrenheit = 273.15;
 
+	//Données calculées à chaque reception de données de l'Arduino
 	public double temperature_mesuree_fahrenheit;
 	public double hysteresis;
 	public double temperature_haute;
 	public double temperature_bas;
 	public double incertitude;
 	
-	
+	//Constructeur
 	public ModelFacade() {
 
 	}
 	
+	//Calculs des variables d'environnements à chaque reception de données de l'Arduino
 	public void determiner_valeur_environnement() {
 		hysteresis = (consigne*precision)/100;
 		temperature_mesuree_fahrenheit = Fahrenheit + split_data.getTemperature_double();
@@ -39,6 +46,9 @@ public class ModelFacade {
 	}
 
 
+	/*
+	 * Accesseurs
+	 */
 	public double getConsigne() {
 		return consigne;
 	}

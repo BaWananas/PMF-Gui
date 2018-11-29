@@ -1,5 +1,8 @@
 package model;
 
+/*
+ * Classe qui convetit les données recues par l'Arduino en double
+ */
 public class Split_Data {
 	
 	public Split_Data() {

@@ -1,27 +1,33 @@
 package model;
 
+/*
+ * Classe qui détermine comment l'Arduino doit agir en fonction des donnéees qu'elle envoie
+ */
 public class Decision_Fonctionnement {
 	
 	/*
-	 * Decision a prendre en fonction des donneees calculees
-	 * 
+	 * Compositions
 	 */
 	Split_Data split_data = new Split_Data();
 	ModelFacade modelfacade = new ModelFacade();
 	Serial serial = new Serial();
 	
+	//Difference entre la consigne et la temperature actuelle
 	public double difference_temperature_atteindre;
 	
+	//Messages à renvoyer pour avertir l'utilisateur
 	public String path_file_instruction = "instructions.txt";
 	public String message_alerte = "Impossible d'aller à cette temperature, risque de condensation";
 	public String message_normal = "Changement de temperature en cours";
 	public String message_bonne_temperature = "Bonne temperature atteinte";
 	public String message_chauffage_urgence = "Rechauffement du frigo pour éviter la condensation";
 	
+	//Constructeur
 	public Decision_Fonctionnement() {
 		
 	}
 	
+	//Envoi les ordres à l'Arduino en fonction des données reçues
 	public String action_temperature() {
 		difference_temperature_atteindre = modelfacade.getConsigne() - split_data.getTemperature_double();
 		if(difference_temperature_atteindre > 0) {
@@ -88,6 +94,9 @@ public class Decision_Fonctionnement {
 		}
 	
 
+	/*
+	 * Accesseurs
+	 */
 	public Split_Data getSplit_data() {
 		return split_data;
 	}
