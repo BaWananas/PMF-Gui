@@ -145,8 +145,6 @@ public class Serial implements SerialPortEventListener {
 	                split_data.determiner_valeur_double();
 	                modelfacade.determiner_valeur_environnement();
 	                decision_fonctionnement.action_temperature();
-	                
-	                
 	            }
 	
 	        } catch (Exception e) {

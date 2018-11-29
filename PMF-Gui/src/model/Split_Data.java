@@ -14,9 +14,9 @@ public class Split_Data {
 	
 	
 
-	double humidite_double;
-	double temperature_double;
-	double rosee_double;
+	public double humidite_double;
+	public double temperature_double;
+	public double rosee_double;
 	
 	/*
 	 * Conversion String vers double pour traitement des donnees
