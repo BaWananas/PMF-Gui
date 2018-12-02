@@ -47,9 +47,8 @@ public class FxManager {
 		this.primaryStage.setTitle("Pimp My Frigogidaire");
 		this.primaryStage.setResizable(false);
 		this.primaryStage.initStyle(StageStyle.TRANSPARENT);
-		this.primaryStage.setAlwaysOnTop(true);
 		this.primaryStage.setOpacity(1);
-		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("images/background.png")));
+		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("fxml/images/background.png")));
 		
 		//Init the container
 		FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/mainMenu.fxml"));
@@ -69,6 +68,9 @@ public class FxManager {
 		//Load the stage
 		this.setMovableFrame(primaryStage);
 		this.primaryStage.show();
+		
+		//Play boot animations
+		AnimationsManager.extendWindow(primaryContainer);
 	}
 	
 	/*

@@ -14,12 +14,12 @@
    <children>
       <ImageView fitHeight="512.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/background.png" />
+            <Image url="@images/background.png" />
          </image>
       </ImageView>
       <ImageView fx:id="close" fitHeight="32.0" fitWidth="32.0" layoutX="113.0" layoutY="27.0" onMouseClicked="#exit" onMouseEntered="#onButtonFocused" onMouseExited="#onButtonNotFocused" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/close.png" />
+            <Image url="@images/close.png" />
          </image>
          <cursor>
             <Cursor fx:constant="HAND" />
@@ -27,7 +27,7 @@
       </ImageView>
       <ImageView fx:id="minimize" fitHeight="32.0" fitWidth="32.0" layoutX="155.0" layoutY="27.0" onMouseClicked="#minimize" onMouseEntered="#onButtonFocused" onMouseExited="#onButtonNotFocused" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/minimize.png" />
+            <Image url="@images/minimize.png" />
          </image>
          <cursor>
             <Cursor fx:constant="HAND" />
@@ -35,7 +35,7 @@
       </ImageView>
       <ImageView fx:id="temp_image" fitHeight="150.0" fitWidth="200.0" layoutX="268.0" layoutY="62.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/temp.png" />
+            <Image url="@images/temp.png" />
          </image>
          <cursor>
             <Cursor fx:constant="DEFAULT" />
@@ -43,7 +43,7 @@
       </ImageView>
       <ImageView fx:id="consigne_add" fitHeight="32.0" fitWidth="32.0" layoutX="303.0" layoutY="274.0" onMouseClicked="#incrementConsigne" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/add.png" />
+            <Image url="@images/add.png" />
          </image>
          <cursor>
             <Cursor fx:constant="HAND" />
@@ -51,7 +51,7 @@
       </ImageView>
       <ImageView fx:id="consigne_remove" fitHeight="32.0" fitWidth="32.0" layoutX="352.0" layoutY="274.0" onMouseClicked="#decrementConsigne" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/remove.png" />
+            <Image url="@images/remove.png" />
          </image>
          <cursor>
             <Cursor fx:constant="HAND" />
@@ -59,7 +59,7 @@
       </ImageView>
       <ImageView fx:id="consigne_button" fitHeight="46.0" fitWidth="46.0" layoutX="267.0" layoutY="230.0" onMouseClicked="#updateConsigne" onMouseEntered="#onButtonFocused" onMouseExited="#onButtonNotFocused" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/set.png" />
+            <Image url="@images/set.png" />
          </image>
          <cursor>
             <Cursor fx:constant="HAND" />
@@ -67,7 +67,7 @@
       </ImageView>
       <ImageView fx:id="temp_info" fitHeight="32.0" fitWidth="32.0" layoutX="297.0" layoutY="58.0" onMouseEntered="#showInfos" onMouseExited="#hideInfos" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/info.png" />
+            <Image url="@images/info.png" />
          </image>
          <cursor>
             <Cursor fx:constant="HAND" />
@@ -75,14 +75,14 @@
       </ImageView>
       <ImageView fx:id="graph" fitHeight="64.0" fitWidth="64.0" layoutX="306.0" layoutY="357.0" onMouseEntered="#onGraphFocused" onMouseExited="#onGraphNotFocused" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/graph1.png" />
+            <Image url="@images/graph1.png" />
          </image>
       </ImageView>
       <Pane fx:id="temp_type" layoutX="291.0" layoutY="139.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#changeTempType" prefHeight="24.0" prefWidth="32.0">
          <children>
             <ImageView fx:id="temp_type_image" accessibleText="celsius" fitHeight="32.0" fitWidth="32.0" layoutX="-1.0" layoutY="-5.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../images/celsius.png" />
+                  <Image url="@images/celsius.png" />
                </image>
             </ImageView>
          </children>

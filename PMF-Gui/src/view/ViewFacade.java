@@ -3,6 +3,9 @@ package view;
 import java.awt.AWTException;
 
 import controler.Controler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class ViewFacade {
@@ -16,7 +19,7 @@ public class ViewFacade {
 		System.out.println("Launching view");
 		this.setFxmanager(new FxManager(this, primaryStage));
 		try {
-			this.notifManager = new NotificationManager("images/temp_hight.png");
+			this.notifManager = new NotificationManager("fxml/images/temp_hight.png");
 		} catch (AWTException e) {
 			e.printStackTrace();
 		}
@@ -27,7 +30,21 @@ public class ViewFacade {
 	 */
 	public void updateConsigne(Double consigne)
 	{
-		this.controler.updateConsigne(consigne);
+		if (consigne <= this.getControler().getTr())
+		{
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.initOwner(this.fxmanager.getPrimaryStage());
+			alert.initModality(Modality.WINDOW_MODAL);
+			alert.setTitle("Error : Cannot set the specified temperature");
+			alert.setResizable(false);
+			alert.setHeaderText("La température demandée dépasse le seuil maximal de condensation autorisé, merci de choisir une valeur strictement supérieur au point de rosée suivant : " + this.getControler().getTr());
+			alert.setContentText("La condensation peut engendrer une détérioration des composants de votre frigo. Merci de votre compréhension.");
+			alert.show();
+		}
+		else
+		{
+			this.controler.updateConsigne(consigne);
+		}
 	}
 	
 	/*

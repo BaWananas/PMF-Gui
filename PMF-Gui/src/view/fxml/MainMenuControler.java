@@ -1,12 +1,15 @@
 package view.fxml;
 
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import view.AnimationsManager;
 import view.FxManager;
 
 public class MainMenuControler {
@@ -59,16 +62,32 @@ public class MainMenuControler {
 		this.manager = manager;
 	}
 	
+	/*
+	 * On close request
+	 * Exit the program
+	 */
 	public void exit()
 	{
-		this.getManager().getView().getControler().stop();
+		AnimationsManager.minimizeWindow(this.manager.getPrimaryContainer(), new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				getManager().getView().getControler().stop();
+			}
+		});
 	}
 	
+	/*
+	 * On minilize request
+	 * Minimize the window
+	 */
 	public void minimize()
 	{
-		this.manager.getPrimaryStage().setIconified(true);
+		manager.getPrimaryStage().setIconified(true);
 	}
 	
+	/*
+	 * On button is focused by user
+	 */
 	public void onButtonFocused(Event e)
 	{
 		ImageView button = (ImageView)e.getSource();
@@ -79,6 +98,9 @@ public class MainMenuControler {
 		button.setOpacity(0.7);
 	}
 	
+	/*
+	 * On button lose the focus
+	 */
 	public void onButtonNotFocused(Event e)
 	{
 		ImageView button = (ImageView)e.getSource();
@@ -94,14 +116,14 @@ public class MainMenuControler {
 	 */
 	public void onGraphFocused()
 	{
-		this.graph.setImage(new Image(this.getClass().getResourceAsStream("../images/graph2.png")));
+		this.graph.setImage(new Image(this.getClass().getResourceAsStream("images/graph2.png")));
 	}
 	/*
 	 * On the graph button aren't focused
 	 */
 	public void onGraphNotFocused()
 	{
-		this.graph.setImage(new Image(this.getClass().getResourceAsStream("../images/graph1.png")));
+		this.graph.setImage(new Image(this.getClass().getResourceAsStream("images/graph1.png")));
 	}
 	
 	public void changeTempType()
@@ -111,7 +133,7 @@ public class MainMenuControler {
 			if (this.temp_type_image.getAccessibleText().contains("celsius"))
 			{
 				this.temp_type_image.setAccessibleText("fahrenheit");
-				this.temp_type_image.setImage(new Image(this.getClass().getResourceAsStream("../images/fahrenheit.png")));
+				this.temp_type_image.setImage(new Image(this.getClass().getResourceAsStream("images/fahrenheit.png")));
 				this.temp_value.setText("" + this.cToF(Double.parseDouble(this.temp_value.getText())));
 				
 				if (this.consigne.getText() != null)
@@ -126,7 +148,7 @@ public class MainMenuControler {
 			else if (this.temp_type_image.getAccessibleText().contains("fahrenheit"))
 			{
 				this.temp_type_image.setAccessibleText("celsius");
-				this.temp_type_image.setImage(new Image(this.getClass().getResourceAsStream("../images/celsius.png")));
+				this.temp_type_image.setImage(new Image(this.getClass().getResourceAsStream("images/celsius.png")));
 				this.temp_value.setText("" + this.fToC(Double.parseDouble(this.temp_value.getText())));
 				
 				if (this.consigne.getText() != null)
@@ -150,7 +172,6 @@ public class MainMenuControler {
 		{
 			try {
 				this.consigne.setText("" + (Double.parseDouble(this.consigne.getText()) + 0.5d));
-				this.updateConsigne();
 			} catch (Exception e) {
 				this.consigne.setText(this.temp_value.getText());
 			}
@@ -166,7 +187,6 @@ public class MainMenuControler {
 		{
 			try {
 				this.consigne.setText("" + (Double.parseDouble(this.consigne.getText()) - 0.5d));
-				this.updateConsigne();
 			} catch (Exception e) {
 				this.consigne.setText(this.temp_value.getText());
 			}
@@ -192,7 +212,7 @@ public class MainMenuControler {
 	public void showInfos()
 	{
 		this.info.setDisable(false);
-		this.info.setOpacity(1);
+		AnimationsManager.extendWindow(this.info);
 	}
 	
 	/*
@@ -201,7 +221,7 @@ public class MainMenuControler {
 	public void hideInfos()
 	{
 		this.info.setDisable(true);
-		this.info.setOpacity(0);
+		AnimationsManager.minimizeWindow(this.info);
 	}
 	
 	//Private methods//

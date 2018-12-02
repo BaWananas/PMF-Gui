@@ -71,6 +71,15 @@ public class Controler {
 		this.getView().isDoorOpen(isOpen);
 	}
 	
+	/*
+	 * Get the dewpoint
+	 */
+	public Double getTr()
+	{
+		//TODO
+		return 0d;
+	}
+	
 	
 	//Getters and setters//
 	/**
