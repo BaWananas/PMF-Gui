@@ -20,8 +20,6 @@ public class Main {
 		serial.definePort();
 		serial.ini_exec();
 		
-		//serial.modification_fichier("50");
-
 		serial.initialize();
 	}
 
