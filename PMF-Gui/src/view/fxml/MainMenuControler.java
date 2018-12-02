@@ -29,6 +29,8 @@ public class MainMenuControler {
 	private ImageView temp_type_image;
 	@FXML
 	private Text temp_value;
+	@FXML
+	private ImageView temp_image;
 	
 	/*
 	 * Display for the consigne
@@ -200,6 +202,18 @@ public class MainMenuControler {
 	{
 		try {
 			this.manager.getView().updateConsigne(Double.parseDouble(this.consigne.getText()));
+			if (Double.parseDouble(this.consigne.getText()) < Double.parseDouble(temp_value.getText()))
+			{
+				this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp_low.png")));
+			}
+			else if (Double.parseDouble(this.consigne.getText()) > Double.parseDouble(temp_value.getText()))
+			{
+				this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp_hight.png")));
+			}
+			else if (Double.parseDouble(this.consigne.getText()) == Double.parseDouble(temp_value.getText()))
+			{
+				this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp.png")));
+			}
 			System.out.println("Setting consigne");
 		} catch (Exception e) {
 			System.out.println("Consigne isn't set");
@@ -276,6 +290,20 @@ public class MainMenuControler {
 	 */
 	public ImageView getTemp_type_image() {
 		return temp_type_image;
+	}
+
+	/**
+	 * @return the temp_image
+	 */
+	public ImageView getTemp_image() {
+		return temp_image;
+	}
+
+	/**
+	 * @param temp_image the temp_image to set
+	 */
+	public void setTemp_image(ImageView temp_image) {
+		this.temp_image = temp_image;
 	}
 
 	/**
