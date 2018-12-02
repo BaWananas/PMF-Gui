@@ -1,7 +1,8 @@
 package model;
 
 /*
- * Classe principale
+ * Classe principale du modèle
+ * Appelle les 2 principales méthodes de la classe "Serial"
  */
 
 public class Main {
@@ -11,18 +12,17 @@ public class Main {
 	 */
 	static Serial serial = new Serial();
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		
 		/*
 		 * Trouve le port sur lequel l'Arduino est connecté
 		 */
 		serial.definePort();
+		serial.ini_exec();
 		
-		/*
-		 * Lance l'écoute du port série
-		 */
-		serial.initialize();
+		//serial.modification_fichier("50");
 
+		serial.initialize();
 	}
 
 }
