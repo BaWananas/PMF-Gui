@@ -216,6 +216,7 @@ public class Serial implements SerialPortEventListener {
 	
 	
 	public void supprimer_port() throws IOException {
+		System.out.println("Suppression du port");
 	    if (serialPort != null) {
 	        serialPort.removeEventListener();
 	        serialPort.close();
@@ -251,9 +252,11 @@ public class Serial implements SerialPortEventListener {
 	                //Calcule les variables d'environnements à partir des données reçues par l'Arduino
 	                this.determiner_valeur_environnement();
 	                //Prend la décision pour l'Arduino et lui envoi grace à la méthode "writeData" de la classe "Serial"
+	                this.supprimer_port();
 	                this.action_temperature();
 	                //Séparateur pour délimiter les lignes d'informations reçues et traitées
 	                System.out.println(separateur);
+	                this.initialize();
 	            }
 	
 	        } catch (Exception e) {
