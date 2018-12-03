@@ -1,4 +1,4 @@
-
+package model;
 
 /*
  * Classe principale du modèle
