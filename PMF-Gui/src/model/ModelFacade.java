@@ -23,7 +23,6 @@ public class ModelFacade {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -60,6 +59,20 @@ public class ModelFacade {
 	 */
 	public void setControler(Controler controler) {
 		this.controler = controler;
+	}
+
+	/**
+	 * @return the serial
+	 */
+	public Serial getSerial() {
+		return serial;
+	}
+
+	/**
+	 * @param serial the serial to set
+	 */
+	public void setSerial(Serial serial) {
+		this.serial = serial;
 	}
 
 }

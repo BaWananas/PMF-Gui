@@ -54,9 +54,7 @@ public class MainMenuControler {
 	@FXML
 	private Text info_humidity;
 	@FXML
-	private Text info_precision;
-	@FXML
-	private Text info_door_status;
+	private Text info_tr;
 	
 	
 	public void setMainApp(FxManager manager)
@@ -360,34 +358,6 @@ public class MainMenuControler {
 	}
 
 	/**
-	 * @return the info_precision
-	 */
-	public Text getInfo_precision() {
-		return info_precision;
-	}
-
-	/**
-	 * @param info_precision the info_precision to set
-	 */
-	public void setInfo_precision(Text info_precision) {
-		this.info_precision = info_precision;
-	}
-
-	/**
-	 * @return the info_door_status
-	 */
-	public Text getInfo_door_status() {
-		return info_door_status;
-	}
-
-	/**
-	 * @param info_door_status the info_door_status to set
-	 */
-	public void setInfo_door_status(Text info_door_status) {
-		this.info_door_status = info_door_status;
-	}
-
-	/**
 	 * @param temp_type_image the temp_type_image to set
 	 */
 	public void setTemp_type_image(ImageView temp_type_image) {
@@ -448,6 +418,20 @@ public class MainMenuControler {
 	 */
 	public void setConsigne_remove(ImageView consigne_remove) {
 		this.consigne_remove = consigne_remove;
+	}
+
+	/**
+	 * @return the info_tr
+	 */
+	public Text getInfo_tr() {
+		return info_tr;
+	}
+
+	/**
+	 * @param info_tr the info_tr to set
+	 */
+	public void setInfo_tr(Text info_tr) {
+		this.info_tr = info_tr;
 	}
 	
 	

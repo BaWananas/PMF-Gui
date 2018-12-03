@@ -77,6 +77,7 @@ public class Serial implements SerialPortEventListener {
 	/*
 	 * Trouve le port sur lequel est branché l'Arduino
 	 */
+	@SuppressWarnings("rawtypes")
 	public void definePort() throws IOException {
 		System.out.println("Définition du port série connecté à l'Arduino");
 	
@@ -189,8 +190,6 @@ public class Serial implements SerialPortEventListener {
 	    }
 	}
 	
-	
-	
 	/*
 	 * (non-Javadoc)
 	 * @see gnu.io.SerialPortEventListener#serialEvent(gnu.io.SerialPortEvent)
@@ -208,11 +207,8 @@ public class Serial implements SerialPortEventListener {
 		            if (input.ready()) { //Si les données sont prêtes à être réceptionnés
 		                if (input !=null) inputLine = input.readLine();
 		                String [] chunks = inputLine.split(";"); //Tableau de String qui stock les données
-		                if (chunks.length == 4) //Si il y a 3 données reçues en provenance de l'Arduino
-		                {
-		                	//Affichage dans la console des données récéptionnées
-//			                System.out.println("Humiditée : " + chunks[0] + "% | Température : " + chunks[1] + " | Point de rosée : " + chunks[2]);
-			                
+		                if (chunks.length == 4) //Si il y a 4 données reçues en provenance de l'Arduino
+		                {			                
 			                //Assignement des nouvelles valeurs aux données du système
 			                if (!chunks[0].isEmpty()) this.humidite = Double.parseDouble(chunks[0]);
 			                if (!chunks[1].isEmpty()) this.Temperature_mesuree = Double.parseDouble(chunks[1]);
@@ -227,9 +223,10 @@ public class Serial implements SerialPortEventListener {
 			                //Calcule les variables d'environnements à partir des données reçues par l'Arduino
 			                this.determiner_valeur_environnement();
 			                
-			                //Set the View infos
+			                //Update the view informations
 			                this.model.getControler().setTemp(this.Temperature_mesuree);
 			                this.model.getControler().setHumidity(this.humidite.intValue());
+			                this.model.getControler().setTr(this.Temperature_rosee);
 		                }
 		            }
 		
@@ -249,8 +246,6 @@ public class Serial implements SerialPortEventListener {
         	//Emission de la première donnée
             output.write(consigne);
             output.flush();
-            //Délimiteur pour les données
-            //output.write(DASH_ASCII);
         }
         catch (Exception e)
         {
@@ -266,8 +261,6 @@ public class Serial implements SerialPortEventListener {
 		hysteresis = (consigne*precision)/100;
 		temperature_haute = consigne + hysteresis;
 		temperature_bas = consigne-hysteresis;
-//		System.out.println("Valeurs d'environnements du système : hysteresis = " + hysteresis + " temperature_mesuree_fahrenheit = " + temperature_mesuree_fahrenheit + " temperature_haute = " + temperature_haute + " temperature_bas = " + temperature_bas);
-
 	}
 
 

@@ -122,19 +122,11 @@ public class ViewFacade {
 	}
 	
 	/*
-	 * Set the status of the door
-	 */
-	public void isDoorOpen(boolean bool)
-	{
-		this.fxmanager.getPrimaryStageControler().getInfo_door_status().setText("" + bool);
-	}
-	
-	/*
 	 * Set the temperature precision
 	 */
-	public void setPrecision(int precision)
+	public void setTr(Double tr)
 	{
-		this.fxmanager.getPrimaryStageControler().getInfo_precision().setText("" + precision + "%");
+		this.fxmanager.getPrimaryStageControler().getInfo_tr().setText("" + tr + " °C");
 	}
 
 	

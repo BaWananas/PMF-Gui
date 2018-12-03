@@ -68,22 +68,11 @@ public class Controler {
 	/*
 	 * Set the temperature precision
 	 */
-	public void setPrecision(int precision)
+	public void setTr(Double tr)
 	{
 		if (this.view != null)
 		{
-			this.getView().setPrecision(precision);
-		}
-	}
-	
-	/*
-	 * Set the status of the fridge door
-	 */
-	public void setDoorStatus(boolean isOpen)
-	{
-		if (this.view != null)
-		{
-			this.getView().isDoorOpen(isOpen);
+			this.getView().setTr(tr);
 		}
 	}
 	

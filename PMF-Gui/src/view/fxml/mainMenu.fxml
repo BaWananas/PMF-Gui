@@ -90,15 +90,13 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Pane>
-      <Pane fx:id="info" disable="true" layoutX="117.0" layoutY="32.0" opacity="0.0">
+      <Pane fx:id="info" disable="true" layoutX="117.0" layoutY="32.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#d1d6da" height="85.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="6.0" width="160.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#d1d6da" height="60.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="6.0" width="160.0" />
             <Text layoutX="10.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Humidité : " />
-            <Text layoutX="10.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Précision : " />
-            <Text layoutX="11.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Système : " />
+            <Text layoutX="10.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Point de rosée : " />
             <Text fx:id="info_humidity" fill="RED" layoutX="71.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Inconnu" textAlignment="CENTER" wrappingWidth="85.0" />
-            <Text fx:id="info_precision" fill="RED" layoutX="71.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Inconnu" textAlignment="CENTER" wrappingWidth="85.0" />
-            <Text fx:id="info_door_status" fill="RED" layoutX="71.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Inconnu" textAlignment="CENTER" wrappingWidth="85.0" />
+            <Text fx:id="info_tr" fill="RED" layoutX="98.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Inconnu" textAlignment="CENTER" wrappingWidth="51.04296875" />
          </children>
       </Pane>
       <Text fx:id="temp_value" layoutX="323.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="41.34375">
