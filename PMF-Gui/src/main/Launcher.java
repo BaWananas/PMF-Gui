@@ -1,3 +1,4 @@
+package main;
 import controler.Controler;
 import javafx.application.Application;
 import javafx.stage.Stage;

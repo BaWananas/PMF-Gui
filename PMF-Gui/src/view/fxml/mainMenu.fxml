@@ -90,7 +90,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Pane>
-      <Pane fx:id="info" disable="true" layoutX="117.0" layoutY="32.0">
+      <Pane fx:id="info" disable="true" layoutX="117.0" layoutY="32.0" opacity="0.0">
          <children>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#d1d6da" height="60.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="6.0" width="160.0" />
             <Text layoutX="10.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Humidité : " />
