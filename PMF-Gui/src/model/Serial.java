@@ -189,7 +189,7 @@ public class Serial implements SerialPortEventListener {
         output = serialPort.getOutputStream();
         
         //Envoi de données à l'Arduino
-        writeData(0, 0);
+        writeData("0");
         
         //Ajout des eventListener et des notifications quand les données sont reçues
         System.out.println("Add event listener");
@@ -206,7 +206,7 @@ public class Serial implements SerialPortEventListener {
 	    if (serialPort != null) {
 			System.out.println("Suppression du port");
 			//Envoi de 2 données à l'Arduino
-			writeData(0, 0);
+			writeData("0");
 			//Suppresion de l'eventListener relié au port série
 	        serialPort.removeEventListener();
 	        //Fermeture du port série
@@ -263,25 +263,16 @@ public class Serial implements SerialPortEventListener {
 	}
 	
 	/*
-	 * Méthode pour envoyer des données de type int
+	 * Méthode pour envoyer des données de type String
 	 */
-    public void writeData(int premiere_donnee, int deuxieme_donnee)
-    {
+    public void writeData(String consigne)    {
         try
         {
         	//Emission de la première donnée
-            output.write(premiere_donnee);
+            output.write(consigne.getBytes());
             output.flush();
             //Délimiteur pour les données
-            output.write(DASH_ASCII);
-            output.flush();
-            
-        	//Emission de la deuxième donnée
-            output.write(deuxieme_donnee);
-            output.flush();
-            //Va etre lu comme un octet
-            output.write(SPACE_ASCII);
-            output.flush();
+            //output.write(DASH_ASCII);
         }
         catch (Exception e)
         {
