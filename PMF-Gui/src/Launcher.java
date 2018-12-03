@@ -7,6 +7,8 @@ import view.ViewFacade;
 public class Launcher extends Application{
 	
 	private Controler controler;
+	private ModelFacade model;
+	private ViewFacade view;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -14,7 +16,9 @@ public class Launcher extends Application{
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		this.setControler(new Controler(new ModelFacade(), new ViewFacade(primaryStage)));	
+		this.model = new ModelFacade();
+		this.view = new ViewFacade(primaryStage);
+		this.setControler(new Controler(this.model, this.view));	
 	}
 
 	/**
@@ -29,6 +33,34 @@ public class Launcher extends Application{
 	 */
 	public void setControler(Controler controler) {
 		this.controler = controler;
+	}
+
+	/**
+	 * @return the model
+	 */
+	public ModelFacade getModel() {
+		return model;
+	}
+
+	/**
+	 * @param model the model to set
+	 */
+	public void setModel(ModelFacade model) {
+		this.model = model;
+	}
+
+	/**
+	 * @return the view
+	 */
+	public ViewFacade getView() {
+		return view;
+	}
+
+	/**
+	 * @param view the view to set
+	 */
+	public void setView(ViewFacade view) {
+		this.view = view;
 	}
 
 	

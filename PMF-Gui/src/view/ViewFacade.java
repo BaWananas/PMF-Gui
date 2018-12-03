@@ -28,23 +28,73 @@ public class ViewFacade {
 	/*
 	 * Update the consigne value
 	 */
-	public void updateConsigne(Double consigne)
+	public boolean updateConsigne(int consigne)
 	{
-		if (consigne <= this.getControler().getTr())
+		if (this.getFxmanager().getPrimaryStageControler().getTemp_type_image().getAccessibleText().equalsIgnoreCase("celsius"))
 		{
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.initOwner(this.fxmanager.getPrimaryStage());
-			alert.initModality(Modality.WINDOW_MODAL);
-			alert.setTitle("Error : Cannot set the specified temperature");
-			alert.setResizable(false);
-			alert.setHeaderText("La température demandée dépasse le seuil maximal de condensation autorisé, merci de choisir une valeur strictement supérieur au point de rosée suivant : " + this.getControler().getTr());
-			alert.setContentText("La condensation peut engendrer une détérioration des composants de votre frigo. Merci de votre compréhension.");
-			alert.show();
+			if (consigne < 0 || consigne > 60)
+			{
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.initOwner(this.fxmanager.getPrimaryStage());
+				alert.initModality(Modality.WINDOW_MODAL);
+				alert.setTitle("Error : Cannot set the specified temperature");
+				alert.setResizable(false);
+				alert.setHeaderText("La température demandée n'entre pas dans l'intervale des valeurs possibles des températures ambiantes pour la formule du point de rosée.");
+				alert.setContentText("La formule de Magnu-tetens demande des valeurs de température ambiante comprise dans l'interval : [0;60]");
+				alert.show();
+				return false;
+			}
+			else if (consigne <= this.getControler().getTr())
+			{
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.initOwner(this.fxmanager.getPrimaryStage());
+				alert.initModality(Modality.WINDOW_MODAL);
+				alert.setTitle("Error : Cannot set the specified temperature");
+				alert.setResizable(false);
+				alert.setHeaderText("La température demandée dépasse le seuil maximal de condensation autorisé, merci de choisir une valeur strictement supérieur au point de rosée suivant : " + this.getControler().getTr());
+				alert.setContentText("La condensation peut engendrer une détérioration des composants de votre frigo. Merci de votre compréhension.");
+				alert.show();
+				return false;
+			}
+			else
+			{
+				this.controler.updateConsigne(consigne);
+				return true;
+			}
 		}
 		else
 		{
-			this.controler.updateConsigne(consigne);
+			if (consigne < 32 || consigne > 140)
+			{
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.initOwner(this.fxmanager.getPrimaryStage());
+				alert.initModality(Modality.WINDOW_MODAL);
+				alert.setTitle("Error : Cannot set the specified temperature");
+				alert.setResizable(false);
+				alert.setHeaderText("La température demandée n'entre pas dans l'intervale des valeurs possibles des températures ambiantes pour la formule du poitn de rosée.");
+				alert.setContentText("La formule de Magnu-tetens demande des valeurs de température ambiante comprise dans l'interval : [0;60]");
+				alert.show();
+				return false;
+			}
+			else if (consigne <= this.getFxmanager().getPrimaryStageControler().cToF(this.getControler().getTr()))
+			{
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.initOwner(this.fxmanager.getPrimaryStage());
+				alert.initModality(Modality.WINDOW_MODAL);
+				alert.setTitle("Error : Cannot set the specified temperature");
+				alert.setResizable(false);
+				alert.setHeaderText("La température demandée dépasse le seuil maximal de condensation autorisé, merci de choisir une valeur strictement supérieur au point de rosée suivant : " + this.getFxmanager().getPrimaryStageControler().cToF(this.getControler().getTr()));
+				alert.setContentText("La condensation peut engendrer une détérioration des composants de votre frigo. Merci de votre compréhension.");
+				alert.show();
+				return false;
+			}
+			else
+			{
+				this.controler.updateConsigne(this.getFxmanager().getPrimaryStageControler().fToC(consigne));
+				return true;
+			}
 		}
+		
 	}
 	
 	/*
@@ -52,7 +102,15 @@ public class ViewFacade {
 	 */
 	public void setTemp(Double temp)
 	{
-		this.getFxmanager().getPrimaryStageControler().getTemp_value().setText("" + temp);
+		if (this.getFxmanager().getPrimaryStageControler().getTemp_type_image().getAccessibleText().equalsIgnoreCase("celsius"))
+		{
+			this.getFxmanager().getPrimaryStageControler().getTemp_value().setText("" + temp);
+		}
+		else
+		{
+			this.getFxmanager().getPrimaryStageControler().getTemp_value().setText("" + this.getFxmanager().getPrimaryStageControler().cToF(temp));
+		}
+		
 	}
 	
 	/*

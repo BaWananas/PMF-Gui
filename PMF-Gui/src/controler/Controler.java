@@ -5,15 +5,15 @@ import view.ViewFacade;
 
 public class Controler {
 	
-	private ModelFacade model;
-	private ViewFacade view;
+	private ModelFacade model = null;
+	private ViewFacade view = null;
 	
 	public Controler(ModelFacade model, ViewFacade view)
 	{
-		this.setModel(model);
-//		this.model.setControler(this);
 		this.setView(view);
 		this.view.setControler(this);
+		this.setModel(model);
+		this.model.setControler(this);
 		this.view.getNotifManager().displayMessage("PMF just started ! ");
 		System.out.println("Launching contoler");
 	}
@@ -25,6 +25,7 @@ public class Controler {
 	 */
 	public void stop()
 	{
+		this.model.stop();
 		this.getView().getNotifManager().displayMessage("Goodbye master !");
 		this.getView().getNotifManager().stop();
 		this.view.getFxmanager().getPrimaryStage().close();
@@ -33,10 +34,13 @@ public class Controler {
 	/*
 	 * Update the consigne value
 	 */
-	public void updateConsigne(Double consigne)
+	public void updateConsigne(int consigne)
 	{
-		//TODO
-		System.out.println("Updating consigne");
+		if (this.model != null)
+		{
+			this.model.setConsigne(consigne);
+			System.out.println("Updating consigne");
+		}
 	}
 	
 	/*
@@ -44,7 +48,10 @@ public class Controler {
 	 */
 	public void setTemp(Double temp)
 	{
-		this.view.setTemp(temp);
+		if (this.view != null)
+		{
+			this.view.setTemp(temp);
+		}
 	}
 	
 	/*
@@ -52,7 +59,10 @@ public class Controler {
 	 */
 	public void setHumidity(int percent)
 	{
-		this.view.setHumidity(percent);
+		if (this.view != null)
+		{
+			this.view.setHumidity(percent);
+		}
 	}
 	
 	/*
@@ -60,7 +70,10 @@ public class Controler {
 	 */
 	public void setPrecision(int precision)
 	{
-		this.getView().setPrecision(precision);
+		if (this.view != null)
+		{
+			this.getView().setPrecision(precision);
+		}
 	}
 	
 	/*
@@ -68,7 +81,10 @@ public class Controler {
 	 */
 	public void setDoorStatus(boolean isOpen)
 	{
-		this.getView().isDoorOpen(isOpen);
+		if (this.view != null)
+		{
+			this.getView().isDoorOpen(isOpen);
+		}
 	}
 	
 	/*
@@ -76,9 +92,14 @@ public class Controler {
 	 */
 	public Double getTr()
 	{
-		//TODO
+		if (model != null)
+		{
+			return this.model.getDewPoint();
+		}
 		return 0d;
 	}
+	
+
 	
 	
 	//Getters and setters//

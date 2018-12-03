@@ -173,7 +173,7 @@ public class MainMenuControler {
 		if (this.consigne.getText() != null)
 		{
 			try {
-				this.consigne.setText("" + (Double.parseDouble(this.consigne.getText()) + 0.5d));
+				this.consigne.setText("" + (Double.parseDouble(this.consigne.getText()) + 1d));
 			} catch (Exception e) {
 				this.consigne.setText(this.temp_value.getText());
 			}
@@ -188,7 +188,7 @@ public class MainMenuControler {
 		if (this.consigne.getText() != null)
 		{
 			try {
-				this.consigne.setText("" + (Double.parseDouble(this.consigne.getText()) - 0.5d));
+				this.consigne.setText("" + (Double.parseDouble(this.consigne.getText()) - 1d));
 			} catch (Exception e) {
 				this.consigne.setText(this.temp_value.getText());
 			}
@@ -201,20 +201,22 @@ public class MainMenuControler {
 	public void updateConsigne()
 	{
 		try {
-			this.manager.getView().updateConsigne(Double.parseDouble(this.consigne.getText()));
-			if (Double.parseDouble(this.consigne.getText()) < Double.parseDouble(temp_value.getText()))
+			if (this.manager.getView().updateConsigne(this.arrondir_valeur(Double.parseDouble(this.consigne.getText()))))
 			{
-				this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp_low.png")));
+				if (Double.parseDouble(this.consigne.getText()) < Double.parseDouble(temp_value.getText()))
+				{
+					this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp_low.png")));
+				}
+				else if (Double.parseDouble(this.consigne.getText()) > Double.parseDouble(temp_value.getText()))
+				{
+					this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp_hight.png")));
+				}
+				else if (Double.parseDouble(this.consigne.getText()) == Double.parseDouble(temp_value.getText()))
+				{
+					this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp.png")));
+				}
+				System.out.println("Setting consigne");
 			}
-			else if (Double.parseDouble(this.consigne.getText()) > Double.parseDouble(temp_value.getText()))
-			{
-				this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp_hight.png")));
-			}
-			else if (Double.parseDouble(this.consigne.getText()) == Double.parseDouble(temp_value.getText()))
-			{
-				this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp.png")));
-			}
-			System.out.println("Setting consigne");
 		} catch (Exception e) {
 			System.out.println("Consigne isn't set");
 		}
@@ -239,7 +241,7 @@ public class MainMenuControler {
 	}
 	
 	//Private methods//
-	private Double cToF(Double celsius)
+	public Double cToF(Double celsius)
 	{
 		Double d = (celsius * (Double)(9d/5d)) + 32d;
 		d = d * 10d;
@@ -247,13 +249,36 @@ public class MainMenuControler {
 		return d;
 	}
 	
-	private Double fToC(Double fahrenheit)
+	public Double fToC(Double fahrenheit)
 	{
 		Double d = (fahrenheit - 32d) * (Double)(5d/9d);
 		d = d * 10d;
 		d = (double)(Math.round(d))/10d;
 		return d;
 	}
+	
+	public int cToF(int celsius)
+	{
+		Double d = (celsius * (Double)(9d/5d)) + 32d;
+		d = d * 10d;
+		d = (double)(Math.round(d))/10d;
+		return d.intValue();
+	}
+	
+	public int fToC(int fahrenheit)
+	{
+		Double d = (fahrenheit - 32d) * (Double)(5d/9d);
+		d = d * 10d;
+		d = (double)(Math.round(d))/10d;
+		return d.intValue();
+	}
+	
+    /*
+     * Cette classe permet d'arrondir la consigne entrée
+     */
+    public int arrondir_valeur(double consigne) {
+        return (int)(double)Math.round(consigne * 1) / 1;
+    }
 	
 
 	//Getters and setters//
