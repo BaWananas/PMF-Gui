@@ -1,14 +1,11 @@
-package model;
+
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.TooManyListenersException;
-import java.util.concurrent.TimeUnit;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -18,47 +15,45 @@ import gnu.io.SerialPortEventListener;
 /*
  * Classe qui initialise la conenxion en trouvant le bon port usb sur lequel est connecté la carte Arduino
  * Puis récupère les informations envoyées par l'Arduino
+ * Peut envoyer des consignes à l'Arduino
+ * Calcule de variables d'environnements
  */
 public class Serial implements SerialPortEventListener {
-	
-
-	//Difference entre la consigne et la temperature actuelle
-	public double difference_temperature_atteindre;
-	
-	//Messages à renvoyer pour avertir l'utilisateur
-	public String path_file_instruction = "instructions.txt";
-	public String message_alerte = "Impossible d'aller à cette temperature, risque de condensation.";
-	public String message_normal = "Changement de temperature en cours, veuillez patienter.";
-	public String message_bonne_temperature = "Bonne temperature atteinte.";
-	public String message_chauffage_urgence = "Rechauffement du frigo pour éviter la condensation.";
 	
 	public String separateur = "\n-----------------------\n";
 
 	/*
-	 * Variables issues de l'Arduino
+	 * Variables entrantes récupérées de l'Arduino
 	 */
 	public String humidite;
 	public String Temperature_mesuree;
 	public String Temperature_rosee;
 	
+	/*
+	 * Variables issues de l'Arduino traduites en double
+	 */
 	public double humidite_double;
 	public double temperature_double;
 	public double rosee_double;
 	public double rosee_double_elevee;
 	
 	
-	//Type de système, donnée affichée graphiquement
+	/*
+	 * Type de système, donnée affichée graphiquement
+	 */
 	public String type_systeme = "Fermé";
 
 	
 	/*
-	 * Données modifiable depuis l'interface
+	 * Données modifiables depuis l'interface
 	 */
-	public double consigne = 15;
+	public double consigne = 15.2; //Consigne à envoyer à l'Arduino si l'utilisateur veut changer sa valeur depuis l'interface
 	public double precision = 1; //Valeur en %
 	public double Fahrenheit = 273.15;
 
-	//Données calculées à chaque reception de données de l'Arduino
+	/*
+	 * Données calculées à chaque reception de données de l'Arduino
+	 */
 	public double temperature_mesuree_fahrenheit;
 	public double hysteresis;
 	public double temperature_haute;
@@ -69,14 +64,17 @@ public class Serial implements SerialPortEventListener {
 	 * Temperature de rosee élevée de 1 °C (en cas de température du frigo insuffisante)
 	 */
 	public String consigne_string = Double.toString(consigne);
-	public String temp_urgence = "50";
 	
+	/*
+	 * Consigne en int
+	 * Permet d'etre utilisé par la méthode writeData(inta, int b)
+	 */
+	public int consigne_int = (int) consigne;
 	
 	/*
 	 * Variables nécéssaires à la reception/emission de données
 	 */
 	public BufferedReader input;
-	@SuppressWarnings("unused")
 	public OutputStream output;
 	private static final int TIME_OUT = 2000;
 	private static final int DATA_RATE = 9600;
@@ -84,42 +82,18 @@ public class Serial implements SerialPortEventListener {
 	private boolean finish = false;
 	
 	/*
-	 * Agrégation et compositions pour envoi et reception de données
+	 * Objets pour la recpetion et l'emission de données
 	 */
-	SerialPort serialPort;
-    CommPortIdentifier portId = null;
-
-	
-  //Fichier header
-  	public static String Path_File_H = "consigne.h";
-  	public static String Full_Path_File_H = "C:\\Users\\Thommes\\Documents\\Arduino\\consigne\\" + Path_File_H;
-
-  	//Fichier C qui utilise le header ci-dessus
-  	public static String Path_File_C = "consigne.c";
-  	public static String Full_Path_File_C = "C:\\Users\\Thommes\\Documents\\Arduino\\consigne\\" + Path_File_C;
-
-  	//Fichier .ino qui utilise le header ci-dessus
-  	public static String Path_File_Ino = "consigne.ino";
-  	public static String Full_Path_File_Ino = "C:\\Users\\Thommes\\Documents\\Arduino\\consigne\\" + Path_File_Ino;
+	public SerialPort serialPort;
+    public CommPortIdentifier portId = null;
 
   	
-  	/*
-  	 * Variables à utiliser dans les commandes arduino-cli
-  	 * help : https://github.com/arduino/arduino-cli
-  	 * Release -> v0.3.1 for windows
-  	 */
-  	
-  	/*
-  	 * Objet qui execute les commandes de la meme facon que l'invité de commande
-  	 */
-  	static Runtime runtime = Runtime.getRuntime();
-  	
-  	/*
-  	 * Dossiers à utiliser dans les commandes d'arduino-cli
-  	 */
-  	public static String Main_Repository = "C:\\Users\\Thommes\\Documents\\Arduino\\consigne"; //Repertoire des fichiers Arduino = Sketch
-  	public static String programme = "C:\\Users\\Thommes\\Documents\\Arduino\\arduino-cli-0.3.1-alpha.preview-windows.exe"; //Repertoire de l'executable arduino-cli	
-  	public static String nom_arduino = "arduino:avr:uno"; //Identifiant de la carte Arduino, ici dans le cas de l'Arduino Uno
+    /*
+     * Variables ASCII avec leurs valeurs en int pour l'emission de données
+     */
+    final static int SPACE_ASCII = 32;
+    final static int DASH_ASCII = 45;
+    final static int NEW_LINE_ASCII = 10;
   	
 	/*
 	 * Liste des ports possibles
@@ -136,24 +110,18 @@ public class Serial implements SerialPortEventListener {
 	 */
 	public void definePort() throws IOException {
 		System.out.println("Définition du port série connecté à l'Arduino");
-		
-		CommPortIdentifier serialPortId = null;
 	
-		@SuppressWarnings("rawtypes")
-		Enumeration enumComm;
+		//Enumération des ports identifiés
+		Enumeration enumComm = CommPortIdentifier.getPortIdentifiers();
 	
-		enumComm = CommPortIdentifier.getPortIdentifiers();
-	
+		//On parcours tous les ports identifiés
 		while (enumComm.hasMoreElements()) {
 			
-			serialPortId = (CommPortIdentifier)enumComm.nextElement();
+			CommPortIdentifier serialPortId = (CommPortIdentifier)enumComm.nextElement();
 			
 			if (serialPortId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-				// Apply the right port to the array
+				//Le bon port est appliqué
 				PORT_NAMES[2] = serialPortId.getName();
-				System.out.println(separateur);
-				System.out.println("Le numéro du port est " + PORT_NAMES[2]);
-				System.out.println(separateur);
 				
 			}
 
@@ -161,9 +129,6 @@ public class Serial implements SerialPortEventListener {
 		}
 
 	}
-
-
-	
 
 	
 
@@ -176,11 +141,11 @@ public class Serial implements SerialPortEventListener {
 	
 	    System.out.println("Initialisation de l'écoute du port série " + PORT_NAMES[2]);
 
-	    //First, Find an instance of serial port as set in PORT_NAMES.
+	    //Instance des ports séries d'après la variable PORT_NAMES[] 
 	    while (portEnum.hasMoreElements()) {
 	    	
 	        CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-	        for (String portName : PORT_NAMES) {
+	        for (String portName : PORT_NAMES) { //Parcourir l'ensemble des ports séries
 	            if (currPortId.getName().equals(portName)) {
 	                portId = currPortId; 
 	                break;
@@ -188,40 +153,71 @@ public class Serial implements SerialPortEventListener {
 	            }
 	        }
 	    }
+	    //Arret du programme si pas de connexion avec la carte Arduino
 	    if (portId == null) {
 	        System.out.println("Could not find COM port.");
 	        return;
 	    }
-	
+	    
+	    System.out.println("Creation de serialPort");
 	    try {
-	        serialPort = (SerialPort) portId.open(this.getClass().getName(),
-	                TIME_OUT);
+	    	//Paramétrage du port série
+	        serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
 	        serialPort.setSerialPortParams(DATA_RATE,
 	                SerialPort.DATABITS_8,
 	                SerialPort.STOPBITS_1,
 	                SerialPort.PARITY_NONE);
-	
-	        // open the streams
-	        input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-	        output = serialPort.getOutputStream();
-	        
-	
-	        serialPort.addEventListener(this);
-	        serialPort.notifyOnDataAvailable(true);
+	        //Appel de la méthode qui active les input et output stream et les eventListener
+	        this.doListen();
 	    } catch (Exception e) {
-	        // System.err.println(e.toString());
-	        
+	         e.printStackTrace();
 	    }
 	}
 	
+	/*
+	 * Méthode qui est appelée lors de l'initialisation (méthode initialize())
+	 * Permet d'activer les flux d'entrée et de sortie (input and output streams)
+	 * Ajoute un eventListener au port série
+	 */
+	public void doListen() throws IOException, TooManyListenersException
+	{
+		//Avertir l'utilisateur
+		System.out.println("Active I/O streams");
+		
+		//I/O
+        input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+        output = serialPort.getOutputStream();
+        
+        //Envoi de données à l'Arduino
+        writeData(0, 0);
+        
+        //Ajout des eventListener et des notifications quand les données sont reçues
+        System.out.println("Add event listener");
+        serialPort.addEventListener(this);
+        serialPort.notifyOnDataAvailable(true);
+	}
 	
-	public void supprimer_port() throws IOException {
-		System.out.println("Suppression du port");
+	
+	/*
+	 * Méthode qui permet de stopper l'écoute et de fermer les flux
+	 */
+	public void exitListening() throws IOException {
+		//Si le port série utilisé n'est pas null
 	    if (serialPort != null) {
+			System.out.println("Suppression du port");
+			//Envoi de 2 données à l'Arduino
+			writeData(0, 0);
+			//Suppresion de l'eventListener relié au port série
 	        serialPort.removeEventListener();
+	        //Fermeture du port série
 	        serialPort.close();
+	        //Fermeture des flux d'entrée et de sortie (input and output streams)
 	        output.close();
 	        input.close();
+	        //Mise à null des flux et de l'objet de type SerialPort
+	        output = null;
+	        input = null;
+	        serialPort = null;
 	    }
 	}
 	
@@ -234,198 +230,65 @@ public class Serial implements SerialPortEventListener {
 	 * Stocke dans la variable "chunks"
 	 * Récupère les 3 données séparées par ";"
 	 */
-	public synchronized void serialEvent(SerialPortEvent oEvent) {
+	public void serialEvent(SerialPortEvent oEvent) {
 	    if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 	        try {
+	        	//Mise à null
 	            String inputLine=null;
-	            if (input.ready()) {
+	            if (input.ready()) { //Si les données sont prêtes à être réceptionnés
 	                inputLine = input.readLine();
-	                String [] chunks = inputLine.split(";");
-	                //Affichage dans la console des données récéptionnées
-	                System.out.println("Humiditée : " + chunks[0] + "% | Température : " + chunks[1] + " | Point de rosée : " + chunks[2]);
-	                //Assignement des nouvelles valeurs aux données
-	                this.humidite = chunks[0];
-	                this.Temperature_mesuree = chunks[1];
-	                this.Temperature_rosee = chunks[2];
-	                //Conversion des données en double
-	                this.determiner_valeur_double();
-	                //Calcule les variables d'environnements à partir des données reçues par l'Arduino
-	                this.determiner_valeur_environnement();
-	                //Prend la décision pour l'Arduino et lui envoi grace à la méthode "writeData" de la classe "Serial"
-	                this.supprimer_port();
-	                this.action_temperature();
-	                //Séparateur pour délimiter les lignes d'informations reçues et traitées
+	                String [] chunks = inputLine.split(";"); //Tableau de String qui stock les données
+	                if (chunks.length == 3) //Si il y a 3 données reçues en provenance de l'Arduino
+	                {
+	                	//Affichage dans la console des données récéptionnées
+		                System.out.println("Humiditée : " + chunks[0] + "% | Température : " + chunks[1] + " | Point de rosée : " + chunks[2]);
+		                //Assignement des nouvelles valeurs aux données du système
+		                this.humidite = chunks[0];
+		                this.Temperature_mesuree = chunks[1];
+		                this.Temperature_rosee = chunks[2];
+		                //Conversion des données en double
+		                this.determiner_valeur_double();
+		                //Calcule les variables d'environnements à partir des données reçues par l'Arduino
+		                this.determiner_valeur_environnement();
+	                }
+	                //Sépare les trames de données
 	                System.out.println(separateur);
-	                this.initialize();
+
 	            }
 	
 	        } catch (Exception e) {
-	        	
+	        	e.printStackTrace();
 	        }
 	    }
-	    
-
-	}
-	
-	
-	/*
-	 * Méthode qui modifie un fichier .h, .c et .ino
-	 * A chaque fois qu'une trame de donnée est reçue
-	 * Les fichiers prennent la nouvelle valeur de la consigne à respecter
-	 * 
-	 */
-	public static void modification_fichier(String consigne_a_respecter) throws IOException, InterruptedException {
-		
-		/*
-		 * Création d'objets de type File
-		 */
-		System.out.println("Modification des fichiers .h, .c et .ino avec la consigne : " + consigne_a_respecter);
-
-		try{
-			File ff_1=new File(Full_Path_File_H); // Définir l'arborescence
-			File ff_2=new File(Full_Path_File_C); // Définir l'arborescence
-			File ff_3=new File(Full_Path_File_Ino); // Définir l'arborescence
-
-
-			//Création de fichier
-			ff_1.createNewFile();
-			ff_2.createNewFile();
-			ff_3.createNewFile();
-
-			
-			/*
-			 * création d'objets de type FileWriter
-			 */
-			FileWriter ffw_1=new FileWriter(ff_1);
-			FileWriter ffw_2=new FileWriter(ff_2);
-			FileWriter ffw_3=new FileWriter(ff_3);
-
-			/*
-			 * Modification du fichier .h consigne.h
-			 */
-			ffw_1.write("#ifndef consigne");
-			ffw_1.write(System.getProperty( "line.separator" ));
-			ffw_1.write("#define consigne");
-			ffw_1.write(System.getProperty( "line.separator" ));
-			ffw_1.write("#include <Arduino.h>");
-			ffw_1.write(System.getProperty( "line.separator" ));
-			ffw_1.write("extern int consigne_a_respecter;");
-			ffw_1.write(System.getProperty( "line.separator" ));
-			ffw_1.write("#endif");
-			ffw_1.close(); // fermer le fichier à la fin des traitements
-			
-			
-			/*
-			 * Modification du fichier .c consigne.c
-			 */
-			ffw_2.write("#include \"" + Path_File_H + "\"");
-			ffw_2.write(System.getProperty( "line.separator" ));
-			ffw_2.write("int consigne_a_respecter=" + consigne_a_respecter + ";");
-			ffw_2.close(); // fermer le fichier à la fin des traitements
-			
-			
-			/*
-			 * Modification du fichier .ino consigne.ino
-			 */
-			ffw_3.write("#include \"" + Path_File_H + "\"");
-			ffw_3.write(System.getProperty( "line.separator" ));
-			ffw_3.write("void setup() {");
-			ffw_3.write(System.getProperty( "line.separator" ));
-			ffw_3.write("consigne_a_respecter = " + consigne_a_respecter + ";");
-			ffw_3.write(System.getProperty( "line.separator" ));
-			ffw_3.write("Serial.begin(9600);");
-			ffw_3.write(System.getProperty( "line.separator" ));
-			ffw_3.write("}");
-			ffw_3.write(System.getProperty( "line.separator" ));
-			ffw_3.write("void loop() {");
-			ffw_3.write(System.getProperty( "line.separator" ));
-			ffw_3.write("Serial.println(\"30;15;17\");");
-			ffw_3.write(System.getProperty( "line.separator" ));
-			ffw_3.write("}");
-			ffw_3.close(); // fermer le fichier à la fin des traitements
-			
-			} catch (Exception e) {}
 	}
 	
 	/*
-	 * Méthode qui va initialiser la connexion entre windows et l'Arduino
-	 * S'execute une seule fois au démarrage de l'application
+	 * Méthode pour envoyer des données de type int
 	 */
-	public void ini_exec() throws InterruptedException, IOException {
-		
-		/*
-		 * Verification des ports, de compatibilité de la carte et des branchements usb
-		 * Logiciel "arduino-cli" executé
-		 */
-		
-		
-		
-		/*
-		//Mise à jour des index
-		Process a = runtime.exec(programme + " core update-index");
-		System.out.println(programme + " core update-index");
-		a.waitFor();
-
-		//Liste des cartes disponibles
-		Process b = runtime.exec(programme + " board list");
-		System.out.println(programme + " board list");
-		b.waitFor();
-
-		//Recherche les cartes compatibles
-		Process c = runtime.exec(programme + " core search arduino");
-		System.out.println(programme + " core search arduino");
-		c.waitFor();
-		
-		//Instalaltion des paquets pour la carte Arduino
-		Process d = runtime.exec(programme + " core install arduino:avr");
-		System.out.println(programme + " core install arduino:avr");
-		d.waitFor();
-		
-		//Liste des cartes disponibles
-		Process e = runtime.exec(programme + " board list");
-		System.out.println(programme + " board list");
-		e.waitFor();
-	*/
-	}
+    public void writeData(int premiere_donnee, int deuxieme_donnee)
+    {
+        try
+        {
+        	//Emission de la première donnée
+            output.write(premiere_donnee);
+            output.flush();
+            //Délimiteur pour les données
+            output.write(DASH_ASCII);
+            output.flush();
+            
+        	//Emission de la deuxième donnée
+            output.write(deuxieme_donnee);
+            output.flush();
+            //Va etre lu comme un octet
+            output.write(SPACE_ASCII);
+            output.flush();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 	
-	/*
-	 * Méthode qui permet de :
-	 * Compiler le dossier dans lequel se situe les fichier .ino
-	 * Uploader (=téléverser) les fichiers héxadécimaux dans l'Arduino
-	 */
-	public static void exec_commande() throws InterruptedException, IOException {
-		
-		System.out.println("Compilation et téléversement :");
-		
-		
-		//Instalaltion des paquets pour la carte Arduino
-		Process h = runtime.exec(programme + " core install arduino:avr");
-		System.out.println(programme + " core install arduino:avr");
-		String commande_install = programme + " core install arduino:avr";
-		h.waitFor();
-
-
-		
-		//Compile les fichiers du dossier selectionné
-		Process f = runtime.exec("cmd.exe /c " + programme + " compile --fqbn " + nom_arduino + " " + Main_Repository);
-		System.out.println(programme + " compile --fqbn " + nom_arduino + " " + Main_Repository);
-		String commande_compiler = programme + " compile --fqbn " + nom_arduino + " " + Main_Repository;
-		f.waitFor();
-
-
-
-
-		
-		//Téléverse dans la carte Arduino
-		Process g = runtime.exec(programme + " upload -p " + PORT_NAMES[2] + " --fqbn " + nom_arduino + " " + Main_Repository); //Port_Names[2] est obtenu grâce à la méthode definePort
-		System.out.println(programme + " upload -p " + PORT_NAMES[2] + " --fqbn " + nom_arduino + " " + Main_Repository); //Port_Names[2] est obtenu grâce à la méthode definePort
-		String commande_televerse = programme + " upload -p " + PORT_NAMES[2] + " --fqbn " + nom_arduino + " " + Main_Repository;
-		g.waitFor();
-		
-
-		
-	}
-
     
 	/*
 	 * Conversion String vers double pour traitement des donnees
@@ -434,110 +297,27 @@ public class Serial implements SerialPortEventListener {
 		humidite_double = Double.parseDouble(this.getHumidite());
 		temperature_double = Double.parseDouble(this.getTemperature_mesuree());
 		rosee_double = Double.parseDouble(this.getTemperature_rosee());
-		System.out.println("Valeurs chiffrées; humidite_double = " + humidite_double + " temperature_double = " + temperature_double + " rosee_double = " + rosee_double);
-		
+		System.out.println("Valeurs chiffrées : humidite_double = " + humidite_double + " temperature_double = " + temperature_double + " rosee_double = " + rosee_double);
 	}
 	
-	
-	//Calculs des variables d'environnements à chaque reception de données de l'Arduino
+
+	/*
+	 * Calculs des variables d'environnements à chaque reception de données de l'Arduino
+	 */
 	public void determiner_valeur_environnement() {
 		hysteresis = (consigne*precision)/100;
 		temperature_mesuree_fahrenheit = Fahrenheit + getTemperature_double();
 		temperature_haute = consigne + hysteresis;
 		temperature_bas = consigne-hysteresis;
-		System.out.println("Valeurs d'environnements : hysteresis = " + hysteresis + " temperature_mesuree_fahrenheit = " + temperature_mesuree_fahrenheit + " temperature_haute = " + temperature_haute + " temperature_bas = " + temperature_bas);
+		System.out.println("Valeurs d'environnements du système : hysteresis = " + hysteresis + " temperature_mesuree_fahrenheit = " + temperature_mesuree_fahrenheit + " temperature_haute = " + temperature_haute + " temperature_bas = " + temperature_bas);
+
 	}
 	
 	
+
 	
 	/*
-	 * Envoi les ordres à l'Arduino en fonction des données reçues
-	 * Les ordres sont envoyés via la méthode writeData
-	 * L'ordre contient la consigne dans le cas où il est autorisé d'atteindre la température spécifié
-	 * Sinon aucun ordre n'est spécifié
-	 */
-		public String action_temperature() throws TooManyListenersException, InterruptedException, IOException {
-			difference_temperature_atteindre = this.getConsigne() - this.getTemperature_double();
-			System.out.println("Action à faire en fonction des données récupérées de l'Arduino :");
-			if(difference_temperature_atteindre > 0) {
-				if(this.getConsigne() > this.getRosee_double()) {
-					/*
-					 * On peut chauffer
-					 * Appel de la methode modification_fichier de la classe Serial
-					 */
-					modification_fichier(this.getConsigne_string());
-					//On averti l'utilisateur
-					System.out.println(message_normal);
-					//On compile puis téléverse les nouveaux fichiers
-					exec_commande();
-					return message_normal;
-				}
-			}
-			if(difference_temperature_atteindre < 0) {
-				if(this.getConsigne() > this.getRosee_double()) {
-					
-					/*
-					 * On peut refroidir
-					 */
-					modification_fichier(this.getConsigne_string());
-					System.out.println(message_normal);
-					//On compile puis téléverse les nouveaux fichiers
-					exec_commande();
-					return message_normal;
-
-				}
-
-			}
-			if(difference_temperature_atteindre == 0) {
-				if(this.getConsigne() > this.getRosee_double()) {
-
-					/*
-					 * Pas besoin de chauffer, bonne température
-					 */
-					//modification_fichier(this.getConsigne_string()); //Pas besoin de modifier les fichiers
-					System.out.println(message_bonne_temperature);
-					//exec_commande(); //Pas besoin d'envoyer de nouvelle consigne
-					return message_bonne_temperature;
-				}
-			}
-			
-
-			if(this.getTemperature_double() <= this.getRosee_double()) {
-				/*
-				 * Il faut chauffer pour eviter la condensation
-				 */
-				modification_fichier(this.getTemp_urgence());
-				System.out.println(message_chauffage_urgence);
-				//On compile puis téléverse les nouveaux fichiers
-				exec_commande();
-				return message_chauffage_urgence;
-				
-			}
-			
-			if(this.getConsigne() <= this.getRosee_double()) {
-				/*
-				 * Risque de condensation
-				 * L'utilisateur veut atteindre une température dangereuse pour le système
-				 * Pas d'ordre envoyé
-				 */
-				
-				modification_fichier(this.getConsigne_string());
-				System.out.println(message_alerte);
-				exec_commande(); //Pas besoin d'envoyer de nouvelle consigne
-				return message_alerte;
-
-			}
-
-			modification_fichier(this.getConsigne_string());
-			System.out.println(message_normal);
-			//On compile puis téléverse les nouveaux fichiers
-			exec_commande();
-			return message_normal;
-		}
-    
-	
-	/*
-	 * Accesseurs
+	 * Ensemble des accesseurs nécéssaires au fonctionnement du modèle
 	 */
 	public String getPosition() {
 		return this.position;
@@ -616,96 +396,10 @@ public class Serial implements SerialPortEventListener {
 
 
 
-	public double getDifference_temperature_atteindre() {
-		return difference_temperature_atteindre;
-	}
-
-
-
-
-	public void setDifference_temperature_atteindre(double difference_temperature_atteindre) {
-		this.difference_temperature_atteindre = difference_temperature_atteindre;
-	}
-
-
-
-
-	public String getPath_file_instruction() {
-		return path_file_instruction;
-	}
-
-
-
-
-	public void setPath_file_instruction(String path_file_instruction) {
-		this.path_file_instruction = path_file_instruction;
-	}
-
-
-
-
-	public String getMessage_alerte() {
-		return message_alerte;
-	}
-
-
-
-
-	public void setMessage_alerte(String message_alerte) {
-		this.message_alerte = message_alerte;
-	}
-
-
-
-
-	public String getMessage_normal() {
-		return message_normal;
-	}
-
-
-
-
-	public void setMessage_normal(String message_normal) {
-		this.message_normal = message_normal;
-	}
-
-
-
-
-	public String getMessage_bonne_temperature() {
-		return message_bonne_temperature;
-	}
-
-
-
-
-	public void setMessage_bonne_temperature(String message_bonne_temperature) {
-		this.message_bonne_temperature = message_bonne_temperature;
-	}
-
-
-
-
-	public String getMessage_chauffage_urgence() {
-		return message_chauffage_urgence;
-	}
-
-
-
-
-	public void setMessage_chauffage_urgence(String message_chauffage_urgence) {
-		this.message_chauffage_urgence = message_chauffage_urgence;
-	}
-
-
-
 
 	public String getType_systeme() {
 		return type_systeme;
 	}
-
-
-
 
 	public void setType_systeme(String type_systeme) {
 		this.type_systeme = type_systeme;
@@ -717,9 +411,6 @@ public class Serial implements SerialPortEventListener {
 	public double getConsigne() {
 		return consigne;
 	}
-
-
-
 
 	public void setConsigne(double consigne) {
 		this.consigne = consigne;
@@ -938,16 +629,14 @@ public class Serial implements SerialPortEventListener {
 
 
 
-
-	public String getTemp_urgence() {
-		return temp_urgence;
+	public int getConsigne_int() {
+		return consigne_int;
 	}
 
 
 
-
-	public void setTemp_urgence(String temp_urgence) {
-		this.temp_urgence = temp_urgence;
+	public void setConsigne_int(int consigne_int) {
+		this.consigne_int = consigne_int;
 	}
 
 }

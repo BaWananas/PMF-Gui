@@ -1,4 +1,4 @@
-package model;
+
 
 /*
  * Classe principale du modèle
@@ -10,6 +10,7 @@ public class Main {
 	/*
 	 * Composition
 	 */
+	
 	static Serial serial = new Serial();
 
 	public static void main(String[] args) throws Exception {
@@ -17,8 +18,8 @@ public class Main {
 		/*
 		 * Trouve le port sur lequel l'Arduino est connecté
 		 */
+
 		serial.definePort();
-		serial.ini_exec();
 		
 		serial.initialize();
 	}
