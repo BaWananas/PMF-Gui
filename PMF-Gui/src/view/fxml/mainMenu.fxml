@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -99,9 +102,9 @@
             <Text fx:id="info_tr" fill="RED" layoutX="98.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Inconnu" textAlignment="CENTER" wrappingWidth="51.04296875" />
          </children>
       </Pane>
-      <Text fx:id="temp_value" layoutX="323.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="41.34375">
+      <Text fx:id="temp_value" layoutX="322.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="41.34375">
          <font>
-            <Font size="16.0" />
+            <Font size="14.0" />
          </font>
          <cursor>
             <Cursor fx:constant="TEXT" />
@@ -109,5 +112,20 @@
       </Text>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="32.0" layoutX="307.0" layoutY="237.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="6.0" width="73.0" />
       <TextField fx:id="consigne" alignment="CENTER" focusTraversable="false" layoutX="307.0" layoutY="237.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#updateConsigne" prefHeight="32.0" prefWidth="73.0" promptText="Consigne" />
+      <Pane fx:id="graph_pane" disable="true" layoutX="103.0" layoutY="17.0" opacity="0.0" prefHeight="289.0" prefWidth="308.0" style="-fx-background-color: white;">
+         <children>
+            <LineChart fx:id="graph_temp" createSymbols="false" prefHeight="289.0" prefWidth="308.0" title="Température">
+              <xAxis>
+                <CategoryAxis label="t (s)" side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis autoRanging="false" label="T (°C)" lowerBound="14.0" minorTickCount="10" side="LEFT" upperBound="27.0" />
+              </yAxis>
+               <cursor>
+                  <Cursor fx:constant="TEXT" />
+               </cursor>
+            </LineChart>
+         </children>
+      </Pane>
    </children>
 </AnchorPane>

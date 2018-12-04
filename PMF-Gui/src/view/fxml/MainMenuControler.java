@@ -1,9 +1,14 @@
 package view.fxml;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,6 +26,13 @@ public class MainMenuControler {
 	 */
 	@FXML
 	private ImageView graph;
+	@FXML
+	private LineChart<?, ?> graph_temp;
+	@FXML
+	private Pane graph_pane;
+	@SuppressWarnings("rawtypes")
+	private XYChart.Series serie = new XYChart.Series<>();
+	private ArrayList<Double> temps = new ArrayList<>();
 	
 	/*
 	 * Display for the Temperature
@@ -56,10 +68,12 @@ public class MainMenuControler {
 	@FXML
 	private Text info_tr;
 	
+	private long startTime;
 	
 	public void setMainApp(FxManager manager)
 	{
 		this.manager = manager;
+		this.initGraph();
 	}
 	
 	/*
@@ -72,6 +86,37 @@ public class MainMenuControler {
 			@Override
 			public void handle(ActionEvent event) {
 				getManager().getView().getControler().stop();
+			}
+		});
+	}
+	
+	/*
+	 * Configure the graphic
+	 */
+	@SuppressWarnings("unchecked")
+	private void initGraph()
+	{
+		this.startTime = Calendar.getInstance().getTimeInMillis();
+		this.serie.setName("Température de la canette");
+		this.graph_temp.getData().addAll(this.serie);
+	}
+	
+	/*
+	 * Updtae the graphic data with the new values
+	 */
+	public synchronized void updateGraph(Double temp)
+	{
+		String s = "" + (int)((Calendar.getInstance().getTimeInMillis() - this.startTime)/1000);
+		javafx.application.Platform.runLater(new Runnable() {
+			
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+			@Override
+			public void run() {
+				if (serie.getData().size() > 30)
+				{
+					serie.getData().remove(0);
+				}
+				serie.getData().add(new XYChart.Data(s, temp));
 			}
 		});
 	}
@@ -117,6 +162,8 @@ public class MainMenuControler {
 	public void onGraphFocused()
 	{
 		this.graph.setImage(new Image(this.getClass().getResourceAsStream("images/graph2.png")));
+		this.graph_pane.setDisable(false);
+		AnimationsManager.extendWindow(this.graph_pane);
 	}
 	/*
 	 * On the graph button aren't focused
@@ -124,6 +171,8 @@ public class MainMenuControler {
 	public void onGraphNotFocused()
 	{
 		this.graph.setImage(new Image(this.getClass().getResourceAsStream("images/graph1.png")));
+		this.graph_pane.setDisable(true);
+		AnimationsManager.minimizeWindow(this.graph_pane);
 	}
 	
 	public void changeTempType()
@@ -201,22 +250,30 @@ public class MainMenuControler {
 		try {
 			if (this.manager.getView().updateConsigne(this.arrondir_valeur(Double.parseDouble(this.consigne.getText()))))
 			{
-				if (Double.parseDouble(this.consigne.getText()) < Double.parseDouble(temp_value.getText()))
-				{
-					this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp_low.png")));
-				}
-				else if (Double.parseDouble(this.consigne.getText()) > Double.parseDouble(temp_value.getText()))
-				{
-					this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp_hight.png")));
-				}
-				else if (Double.parseDouble(this.consigne.getText()) == Double.parseDouble(temp_value.getText()))
-				{
-					this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp.png")));
-				}
+				this.setTempStatus();
 				System.out.println("Setting consigne");
 			}
 		} catch (Exception e) {
 			System.out.println("Consigne isn't set");
+		}
+	}
+	
+	/*
+	 * Set the regulation animation in terms of the regulation status 
+	 */
+	public void setTempStatus()
+	{
+		if (Double.parseDouble(this.consigne.getText()) < Double.parseDouble(temp_value.getText()))
+		{
+			this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp_low.png")));
+		}
+		else if (Double.parseDouble(this.consigne.getText()) > Double.parseDouble(temp_value.getText()))
+		{
+			this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp_hight.png")));
+		}
+		else if (Double.parseDouble(this.consigne.getText()) == Double.parseDouble(temp_value.getText()))
+		{
+			this.temp_image.setImage(new Image(this.getClass().getResourceAsStream("images/temp.png")));
 		}
 	}
 	
@@ -294,6 +351,21 @@ public class MainMenuControler {
 		this.manager = manager;
 	}
 
+
+	/**
+	 * @return the graph_pane
+	 */
+	public Pane getGraph_pane() {
+		return graph_pane;
+	}
+
+	/**
+	 * @param graph_pane the graph_pane to set
+	 */
+	public void setGraph_pane(Pane graph_pane) {
+		this.graph_pane = graph_pane;
+	}
+
 	/**
 	 * @return the graph
 	 */
@@ -348,6 +420,20 @@ public class MainMenuControler {
 	 */
 	public Text getInfo_humidity() {
 		return info_humidity;
+	}
+
+	/**
+	 * @return the graph_temp
+	 */
+	public LineChart<?, ?> getGraph_temp() {
+		return graph_temp;
+	}
+
+	/**
+	 * @param graph_temp the graph_temp to set
+	 */
+	public void setGraph_temp(LineChart<?, ?> graph_temp) {
+		this.graph_temp = graph_temp;
 	}
 
 	/**
@@ -432,6 +518,50 @@ public class MainMenuControler {
 	 */
 	public void setInfo_tr(Text info_tr) {
 		this.info_tr = info_tr;
+	}
+
+	/**
+	 * @return the serie
+	 */
+	@SuppressWarnings("rawtypes")
+	public XYChart.Series getSerie() {
+		return serie;
+	}
+
+	/**
+	 * @param serie the serie to set
+	 */
+	@SuppressWarnings("rawtypes")
+	public void setSerie(XYChart.Series serie) {
+		this.serie = serie;
+	}
+
+	/**
+	 * @return the temps
+	 */
+	public ArrayList<Double> getTemps() {
+		return temps;
+	}
+
+	/**
+	 * @param temps the temps to set
+	 */
+	public void setTemps(ArrayList<Double> temps) {
+		this.temps = temps;
+	}
+
+	/**
+	 * @return the startTime
+	 */
+	public long getStartTime() {
+		return startTime;
+	}
+
+	/**
+	 * @param startTime the startTime to set
+	 */
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
 	}
 	
 	

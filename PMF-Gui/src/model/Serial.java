@@ -214,7 +214,11 @@ public class Serial implements SerialPortEventListener {
 			                if (!chunks[1].isEmpty()) this.Temperature_mesuree = Double.parseDouble(chunks[1]);
 			                if (!chunks[2].isEmpty()) this.Temperature_rosee = Double.parseDouble(chunks[2]);
 			                
-			                if (!chunks[2].isEmpty() && Double.parseDouble(chunks[3]) != consigne)
+			                if (consigne == 0)
+			                {
+			                	consigne = (int) (Temperature_rosee + 1);
+			                }
+			                else if (!chunks[2].isEmpty() && Double.parseDouble(chunks[3]) != consigne)
 			                {
 			                	System.out.println("Setting consigne : " + consigne);
 			                	writeData(consigne);
@@ -224,9 +228,12 @@ public class Serial implements SerialPortEventListener {
 			                this.determiner_valeur_environnement();
 			                
 			                //Update the view informations
-			                this.model.getControler().setTemp(this.Temperature_mesuree);
-			                this.model.getControler().setHumidity(this.humidite.intValue());
-			                this.model.getControler().setTr(this.Temperature_rosee);
+			                if (this.model.getControler() != null)
+			                {
+			                	this.model.getControler().setTemp(this.Temperature_mesuree);
+			                	this.model.getControler().setHumidity(this.humidite.intValue());
+			                	this.model.getControler().setTr(this.Temperature_rosee);
+			                }
 		                }
 		            }
 		

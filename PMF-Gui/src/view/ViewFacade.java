@@ -111,6 +111,17 @@ public class ViewFacade {
 			this.getFxmanager().getPrimaryStageControler().getTemp_value().setText("" + this.getFxmanager().getPrimaryStageControler().cToF(temp));
 		}
 		
+		if (!this.getFxmanager().getPrimaryStageControler().getConsigne().getText().isEmpty()) 
+		{
+			this.getFxmanager().getPrimaryStageControler().setTempStatus();
+		}
+		else
+		{
+			this.getFxmanager().getPrimaryStageControler().getConsigne().setText("" + (this.controler.getTr()+1));;
+		}
+		
+		this.getFxmanager().getPrimaryStageControler().updateGraph(temp);
+		
 	}
 	
 	/*
